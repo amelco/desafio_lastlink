@@ -3,6 +3,14 @@ services:
     image: rabbitmq:4-management
     ports: [5672:5672,15672:15672]
 
-  api:
-    build: .
-    ports: [8080:5164]
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong!Password
+    ports:
+      - "1433:1433"
+
+  # api:
+  #   build: .
+  #   ports: [8080:5164]
