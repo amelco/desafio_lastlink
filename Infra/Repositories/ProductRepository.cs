@@ -1,34 +1,64 @@
 ﻿using Core.DTOs;
 using Core.Entities;
 using Core.Interfaces;
+using Mapster;
+using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace Infra.Repositories
 {
     public class ProductRepository : IProductRepository
     {
-        public Task<ProductDto> Add(Product product)
+        private readonly ApplicationDbContext _context;
+
+        public ProductRepository(ApplicationDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task Delete(int id)
+        public async Task<Product> Add(Product product)
         {
-            throw new NotImplementedException();
+            product.CreatedAt = DateTime.Now;
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+            return product;
         }
 
-        public Task<IEnumerable<ProductDto>> GetAll()
+        public async Task Delete(int id)
         {
-            throw new NotImplementedException();
+            var product = await _context.Products.FindAsync(id);
+            if (product is not null)
+            {
+                product.IsDeleted = true;
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public Task<Product> GetById(int id)
+        public IEnumerable<Product> GetAll()
         {
-            throw new NotImplementedException();
+            return _context.Products.Where(prod => prod.IsDeleted == false);
+
         }
 
-        public Task<ProductDto> Update(int id, UpdatePoductDto product)
+        public async Task<Product?> GetById(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Products
+                .Where(prod => prod.IsDeleted == false && prod.Id == id)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<Product?> Update(int id, Product product)
+        {
+            var isUpgradable = _context.Products.Any(prod => prod.Id == id && prod.IsDeleted == false);
+            if (isUpgradable)
+            {
+                product.Id = id;
+                _context.Products.Update(product);
+                // TODO: fix problem with CreateAt after update
+                await _context.SaveChangesAsync();
+                return product;
+            }
+            return null;
         }
     }
 }

@@ -2,7 +2,6 @@
 using Core.Entities;
 using Core.Interfaces;
 using Mapster;
-using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -27,33 +26,30 @@ namespace Api.Controllers
             {
                 return NotFound();
             }
-            return Ok(product);
+            var productDto = product.Adapt<ProductDto>();
+            return Ok(productDto);
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll()
+        public ActionResult<IEnumerable<ProductDto>> GetAll()
         {
-            var products = await _repository.GetAll();
-            return Ok(products);
+            var products = _repository.GetAll();
+            var productsDto = products.Adapt<IEnumerable<ProductDto>>();
+            return Ok(productsDto);
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductDto>> Create([FromBody] ProductDto produto)
+        public async Task<ActionResult<ProductDto>> Create([FromBody] UpdateProductDto productDto)
         {
-            var productEntity = produto.Adapt<Product>();
-            if (productEntity == null)
-            {
-                return BadRequest(); // TODO: proper checking of values
-            }
-
-            var createdProduct = await _repository.Add(productEntity);
-            
+            var product = productDto.Adapt<Product>();
+            var createdProduct = await _repository.Add(product);
+            var createdProductDto = createdProduct.Adapt<ProductDto>();
             return Ok(createdProduct);
         }
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<ActionResult<ProductDto>> DeleteById([FromRoute] int id)
+        public async Task<ActionResult> DeleteById([FromRoute] int id)
         {
             try
             {
@@ -67,12 +63,13 @@ namespace Api.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        public async Task<ActionResult<ProductDto>> Update([FromRoute] int id, [FromBody] UpdatePoductDto produto)
+        public async Task<ActionResult<ProductDto>> Update([FromRoute] int id, [FromBody] UpdateProductDto productDto)
         {
             try
             {
-                var updatedProduct = await _repository.Update(id, produto);
-                return Ok(updatedProduct);
+                var product = productDto.Adapt<Product>();
+                var updatedProduct = await _repository.Update(id, product);
+                return Ok(updatedProduct.Adapt<ProductDto>());
             } 
             catch (KeyNotFoundException)
             {
