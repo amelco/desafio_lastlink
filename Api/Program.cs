@@ -1,5 +1,6 @@
 using Core.Interfaces;
 using Infra;
+using Infra.Consumers;
 using Infra.Publishers;
 using Infra.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductPublisher, ProductPublisher>();
 
-// TODO: configure dependency injection
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddHostedService<ProductConsumerWorker>();
 
 var app = builder.Build();
 
