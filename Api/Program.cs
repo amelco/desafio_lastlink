@@ -1,5 +1,6 @@
 using Core.Interfaces;
 using Infra;
+using Infra.Publishers;
 using Infra.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductPublisher, ProductPublisher>();
 
 // TODO: configure dependency injection
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

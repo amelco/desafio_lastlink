@@ -27,7 +27,7 @@ namespace Infra
                     .IsRequired();
                 entity.Property(prod => prod.IsDeleted)
                     .IsRequired()
-                    .HasDefaultValue(false);
+                    .HasDefaultValue(0);
             });
         }
     }
