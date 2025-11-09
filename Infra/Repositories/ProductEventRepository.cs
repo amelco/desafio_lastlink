@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Repositories
 {
@@ -21,7 +22,7 @@ namespace Infra.Repositories
 
         public IEnumerable<ProductEvent> GetAll()
         {
-            return _context.ProductEvents.AsEnumerable();
+            return _context.ProductEvents.Include(ev => ev.Product).AsEnumerable();
 
         }
 

@@ -9,7 +9,8 @@ namespace Infra.Publishers
     {
         public async Task Publish(string message)
         {
-            var factory = new ConnectionFactory { HostName = "192.168.0.8" };
+            var hostname = System.Environment.GetEnvironmentVariable("RabbitMQ__HostName") ?? "localhost";
+            var factory = new ConnectionFactory { HostName = hostname };
             using var connection = await factory.CreateConnectionAsync();
             using var channel = await connection.CreateChannelAsync();
 

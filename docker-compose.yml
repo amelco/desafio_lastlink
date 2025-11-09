@@ -11,6 +11,16 @@ services:
     ports:
       - "1433:1433"
 
-  # api:
-  #   build: .
-  #   ports: [8080:5164]
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:5164"
+    depends_on:
+      - db
+      - rabbit
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=db;Database=ProductManagement;User=sa;Password=YourStrong!Password;TrustServerCertificate=True
+      - RabbitMQ__HostName=rabbit

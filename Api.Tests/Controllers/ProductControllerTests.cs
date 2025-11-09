@@ -59,7 +59,7 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task GetById_WithNonExistingId_ShouldReturnNotFound()
         {
-            _mockRepository.Setup(repo => repo.GetById(1)).ReturnsAsync((Product)null);
+            _mockRepository.Setup(repo => repo.GetById(1)).ReturnsAsync((Product)null!);
 
             var result = await _controller.GetById(1);
 
@@ -180,7 +180,7 @@ namespace Api.Tests.Controllers
             };
 
             _mockRepository.Setup(repo => repo.Update(1, It.IsAny<Product>()))
-                .ReturnsAsync((Product)null);
+                .ReturnsAsync((Product)null!);
 
             var result = await _controller.Update(1, updateDto);
 
