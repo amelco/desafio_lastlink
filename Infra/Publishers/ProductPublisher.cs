@@ -6,7 +6,7 @@ namespace Infra.Publishers
 {
     public class ProductPublisher : IProductPublisher
     {
-        public async Task Publish(string eventName, string message)
+        public async Task Publish(string message)
         {
             var factory = new ConnectionFactory { HostName = "192.168.0.8" };
             using var connection = await factory.CreateConnectionAsync();
@@ -18,7 +18,7 @@ namespace Infra.Publishers
 
             var body = Encoding.UTF8.GetBytes(message);
 
-            await channel.BasicPublishAsync(exchange: "logs", routingKey: eventName, body: body);
+            await channel.BasicPublishAsync(exchange: "logs", routingKey: string.Empty, body: body);
         }
     }
 }

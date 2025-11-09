@@ -3,6 +3,7 @@ using Core.Entities;
 using Core.Interfaces;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Controllers
 {
@@ -12,11 +13,13 @@ namespace Api.Controllers
     {
         private readonly IProductRepository _repository;
         private readonly IProductPublisher _publisher;
+        private readonly IProductEventHandler _eventHandler;
 
-        public ProdutoController(IProductRepository repository, IProductPublisher publisher)
+        public ProdutoController(IProductRepository repository, IProductPublisher publisher, IProductEventHandler eventHandler)
         {
             _repository = repository;
             _publisher = publisher;
+            _eventHandler = eventHandler;
         }
 
         [HttpGet]
@@ -29,8 +32,12 @@ namespace Api.Controllers
                 return NotFound();
             }
 
-            // WARNING: REMOVE!!!!!!!!!!!!!!!!!!!!!
-            await _publisher.Publish("", $"Produto {product.Name} de id {product.Id} foi criado em {product.CreatedAt}.");
+            // TODO: REMOVE from here and put it on Create !!!!!!!!!!!!!!!!!!!!!
+            var serializedEvent = _eventHandler.Create(product); // this function will return the serialized (JSON) ProductEvent 
+            if (!serializedEvent.IsNullOrEmpty())
+            {
+                await _publisher.Publish(serializedEvent);
+            }
 
             var productDto = product.Adapt<ProductDto>();
             return Ok(productDto);
@@ -50,7 +57,7 @@ namespace Api.Controllers
             var product = productDto.Adapt<Product>();
             var createdProduct = await _repository.Add(product);
 
-            //await _publisher.Publish("", $"Produto {product.Name} de id {product.Id} foi criado em {product.CreatedAt}.");
+            // TODO: put send event logic here
 
             var createdProductDto = createdProduct.Adapt<ProductDto>();
             return Ok(createdProduct);

@@ -2,6 +2,6 @@
 {
     public interface IProductPublisher
     {
-        Task Publish(string eventName, string message);
+        Task Publish(string message);
     }
 }

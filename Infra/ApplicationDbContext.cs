@@ -29,6 +29,16 @@ namespace Infra
                     .IsRequired()
                     .HasDefaultValue(0);
             });
+
+            modelBuilder.Entity<ProductEvent>(entity =>
+            {
+                entity.HasKey(prod => prod.Id);
+                entity.Property(prod => prod.Type)
+                    .IsRequired()
+                    .HasMaxLength(256);
+                entity.Property(prod => prod.CreatedAt)
+                    .IsRequired();
+            });
         }
     }
 }
