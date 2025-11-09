@@ -34,6 +34,7 @@ namespace Infra.Repositories
             }
         }
 
+        // TODO: make it async
         public IEnumerable<Product> GetAll()
         {
             return _context.Products.Where(prod => prod.IsDeleted == false);

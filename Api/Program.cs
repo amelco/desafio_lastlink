@@ -13,6 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductEventRepository, ProductEventRepository>();
 builder.Services.AddScoped<IProductPublisher, ProductPublisher>();
 builder.Services.AddScoped<IProductEventHandler, ProductEventHandler>();
 
@@ -37,10 +38,8 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
   
-    // Ensure database is created
     dbContext.Database.EnsureCreated();
   
-    // Or use raw SQL for more control
     await dbContext.Database.ExecuteSqlRawAsync(@"
         IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Products' and xtype='U')
         CREATE TABLE Products (

@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Core.Entities;
+using Core.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -7,6 +11,13 @@ namespace Infra.Consumers
 {
     public class ProductConsumerWorker : BackgroundService
     {
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+
+        public ProductConsumerWorker(IServiceScopeFactory serviceScopeFactory)
+        {
+            _serviceScopeFactory = serviceScopeFactory;
+        }
+
         // TODO: improve error handling
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -21,12 +32,25 @@ namespace Infra.Consumers
             Console.WriteLine(" [*] Waiting for logs.");
 
             var consumer = new AsyncEventingBasicConsumer(channel);
-            consumer.ReceivedAsync += (model, ea) =>
+            consumer.ReceivedAsync += async (model, ea) =>
             {
                 byte[] body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine($" [x] {message}");
-                return Task.CompletedTask;
+
+                var productEvent = JsonConvert.DeserializeObject<ProductEvent>(message);
+                if (productEvent != null)
+                {
+                    using var scope = _serviceScopeFactory.CreateScope();
+                    var eventRepository = scope.ServiceProvider.GetRequiredService<IProductEventRepository>();
+                    await eventRepository.Add(productEvent);
+                    Console.WriteLine($" [x] {message}");
+                }
+                else
+                {
+                    // TODO: handle or log the error
+                }
+
+                    return;
             };
 
             await channel.BasicConsumeAsync("logs_queue", autoAck: true, consumer: consumer);

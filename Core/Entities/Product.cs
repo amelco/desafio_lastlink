@@ -1,6 +1,4 @@
-﻿using Core.DTOs;
-
-namespace Core.Entities
+﻿namespace Core.Entities
 {
     public class Product
     {
@@ -10,6 +8,7 @@ namespace Core.Entities
         public decimal UnitCost { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public bool IsDeleted { get; set; } = false;
-        public IEnumerable<ProductEvent> Events { get; } = new List<ProductEvent>();
+
+        public virtual ICollection<ProductEvent>? Events { get; }
     }
 }
