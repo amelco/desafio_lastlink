@@ -18,7 +18,6 @@ namespace Infra.Consumers
             _serviceScopeFactory = serviceScopeFactory;
         }
 
-        // TODO: improve error handling
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var factory = new ConnectionFactory { HostName = "192.168.0.8" };
@@ -28,8 +27,6 @@ namespace Infra.Consumers
             await channel.ExchangeDeclareAsync(exchange: "logs", type: ExchangeType.Fanout);
 
             await channel.QueueBindAsync(queue: "logs_queue", exchange: "logs", routingKey: string.Empty);
-
-            Console.WriteLine(" [*] Waiting for logs.");
 
             var consumer = new AsyncEventingBasicConsumer(channel);
             consumer.ReceivedAsync += async (model, ea) =>
@@ -43,14 +40,9 @@ namespace Infra.Consumers
                     using var scope = _serviceScopeFactory.CreateScope();
                     var eventRepository = scope.ServiceProvider.GetRequiredService<IProductEventRepository>();
                     await eventRepository.Add(productEvent);
-                    Console.WriteLine($" [x] {message}");
-                }
-                else
-                {
-                    // TODO: handle or log the error
                 }
 
-                    return;
+                return;
             };
 
             await channel.BasicConsumeAsync("logs_queue", autoAck: true, consumer: consumer);

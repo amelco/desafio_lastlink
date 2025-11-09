@@ -69,7 +69,8 @@ namespace Api.Controllers
                 await _repository.Delete(id);
                 return NoContent();
             }
-            catch (KeyNotFoundException) {
+            catch (KeyNotFoundException)
+            {
                 return NotFound();
             }
         }
@@ -80,7 +81,7 @@ namespace Api.Controllers
         {
             var product = productDto.Adapt<Product>();
             var updatedProduct = await _repository.Update(id, product);
-            if (updatedProduct == null) 
+            if (updatedProduct == null)
             {
                 return NotFound();
             }

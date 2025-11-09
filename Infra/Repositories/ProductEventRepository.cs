@@ -1,9 +1,5 @@
-﻿using Core.DTOs;
-using Core.Entities;
+﻿using Core.Entities;
 using Core.Interfaces;
-using Mapster;
-using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
 
 namespace Infra.Repositories
 {
@@ -23,7 +19,6 @@ namespace Infra.Repositories
         }
 
 
-        // TODO: make it async
         public IEnumerable<ProductEvent> GetAll()
         {
             return _context.ProductEvents.AsEnumerable();

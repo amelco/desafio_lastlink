@@ -14,11 +14,11 @@ Content-Type: application/json
 }
 
 ###
-GET {{baseAddress}}/products/3
+GET {{baseAddress}}/products/1
 Accept: application/json
 
 ### 
-PUT {{baseAddress}}/products/3
+PUT {{baseAddress}}/products/2
 Content-Type: application/json
 
 {
@@ -28,8 +28,4 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{baseAddress}}/products/3
-
-###
-GET {{baseAddress}}/products
-Accept: application/json
+DELETE {{baseAddress}}/products/2

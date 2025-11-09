@@ -14,7 +14,8 @@ namespace Infra
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Product>(entity => {
+            modelBuilder.Entity<Product>(entity =>
+            {
                 entity.HasKey(prod => prod.Id);
                 entity.Property(prod => prod.Id)
                     .ValueGeneratedOnAdd();

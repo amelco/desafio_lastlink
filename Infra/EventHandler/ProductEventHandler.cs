@@ -11,7 +11,7 @@ namespace Infra.EventHandler
             var productEvent = new ProductEvent
             {
                 Type = "product.created",
-                ProductId = product.Id, 
+                ProductId = product.Id,
                 CreatedAt = DateTime.Now,
             };
             return JsonConvert.SerializeObject(productEvent);

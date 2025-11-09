@@ -5,7 +5,6 @@ using Core.Interfaces;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Xunit;
 
 namespace Api.Tests.Controllers
 {
@@ -24,10 +23,9 @@ namespace Api.Tests.Controllers
             _controller = new ProdutoController(_mockRepository.Object, _mockPublisher.Object, _mockEventHandler.Object);
         }
 
-                [Fact]
+        [Fact]
         public void GetAll_ShouldReturnOkResult_WithListOfProducts()
         {
-            // Arrange
             var products = new List<Product>
             {
                 new Product { Id = 1, Name = "Product 1", Category = "Category 1", UnitCost = 10.00m, CreatedAt = DateTime.Now },
@@ -35,10 +33,8 @@ namespace Api.Tests.Controllers
             };
             _mockRepository.Setup(repo => repo.GetAll()).Returns(products);
 
-            // Act
             var result = _controller.GetAll();
 
-            // Assert
             var okResult = result.Result.Should().BeOfType<OkObjectResult>().Subject;
             var returnedProducts = okResult.Value.Should().BeAssignableTo<IEnumerable<ProductDto>>().Subject;
             returnedProducts.Should().HaveCount(2);
@@ -47,14 +43,11 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task GetById_WithExistingId_ShouldReturnOkResult()
         {
-            // Arrange
             var product = new Product { Id = 1, Name = "Product 1", Category = "Category 1", UnitCost = 10.00m, CreatedAt = DateTime.Now };
             _mockRepository.Setup(repo => repo.GetById(1)).ReturnsAsync(product);
 
-            // Act
             var result = await _controller.GetById(1);
 
-            // Assert
             var okResult = result.Result.Should().BeOfType<OkObjectResult>().Subject;
             var returnedProduct = okResult.Value.Should().BeOfType<ProductDto>().Subject;
             returnedProduct.Id.Should().Be(product.Id);
@@ -66,20 +59,16 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task GetById_WithNonExistingId_ShouldReturnNotFound()
         {
-            // Arrange
             _mockRepository.Setup(repo => repo.GetById(1)).ReturnsAsync((Product)null);
 
-            // Act
             var result = await _controller.GetById(1);
 
-            // Assert
             result.Result.Should().BeOfType<NotFoundResult>();
         }
 
         [Fact]
         public async Task Create_WithValidData_ShouldReturnOkResult()
         {
-            // Arrange
             var createDto = new UpdateProductDto
             {
                 Name = "New Product",
@@ -102,10 +91,8 @@ namespace Api.Tests.Controllers
             _mockEventHandler.Setup(handler => handler.Create(It.IsAny<Product>()))
                 .Returns("serialized object");
 
-            // Act
             var result = await _controller.Create(createDto);
 
-            // Assert
             var okResult = result.Result.Should().BeOfType<OkObjectResult>().Subject;
             var returnedProduct = okResult.Value.Should().BeOfType<ProductDto>().Subject;
             returnedProduct.Id.Should().Be(createdProduct.Id);
@@ -119,7 +106,6 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task Create_WithValidData_AndNoEvents_ShouldReturnOkResult()
         {
-            // Arrange
             var createDto = new UpdateProductDto
             {
                 Name = "New Product",
@@ -142,10 +128,8 @@ namespace Api.Tests.Controllers
             _mockEventHandler.Setup(handler => handler.Create(It.IsAny<Product>()))
                 .Returns("serialized object");
 
-            // Act
             var result = await _controller.Create(createDto);
 
-            // Assert
             var okResult = result.Result.Should().BeOfType<OkObjectResult>().Subject;
             var returnedProduct = okResult.Value.Should().BeOfType<ProductDto>().Subject;
             returnedProduct.Id.Should().Be(createdProduct.Id);
@@ -156,7 +140,6 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task Update_WithValidData_ShouldReturnOkResult()
         {
-            // Arrange
             var updateDto = new UpdateProductDto
             {
                 Name = "Updated Product",
@@ -176,10 +159,8 @@ namespace Api.Tests.Controllers
             _mockRepository.Setup(repo => repo.Update(1, It.IsAny<Product>()))
                 .ReturnsAsync(updatedProduct);
 
-            // Act
             var result = await _controller.Update(1, updateDto);
 
-            // Assert
             var okResult = result.Result.Should().BeOfType<OkObjectResult>().Subject;
             var returnedProduct = okResult.Value.Should().BeOfType<ProductDto>().Subject;
             returnedProduct.Id.Should().Be(updatedProduct.Id);
@@ -191,7 +172,6 @@ namespace Api.Tests.Controllers
         [Fact]
         public async Task Update_WithNonExistingId_ShouldReturnNotFound()
         {
-            // Arrange
             var updateDto = new UpdateProductDto
             {
                 Name = "Updated Product",
@@ -202,38 +182,30 @@ namespace Api.Tests.Controllers
             _mockRepository.Setup(repo => repo.Update(1, It.IsAny<Product>()))
                 .ReturnsAsync((Product)null);
 
-            // Act
             var result = await _controller.Update(1, updateDto);
 
-            // Assert
             result.Result.Should().BeOfType<NotFoundResult>();
         }
 
         [Fact]
         public async Task DeleteById_WithExistingId_ShouldReturnNoContent()
         {
-            // Arrange
             _mockRepository.Setup(repo => repo.Delete(1))
                 .Returns(Task.CompletedTask);
 
-            // Act
             var result = await _controller.DeleteById(1);
 
-            // Assert
             result.Should().BeOfType<NoContentResult>();
         }
 
         [Fact]
         public async Task DeleteById_WithNonExistingId_ShouldReturnNotFound()
         {
-            // Arrange
             _mockRepository.Setup(repo => repo.Delete(1))
                 .ThrowsAsync(new KeyNotFoundException());
 
-            // Act
             var result = await _controller.DeleteById(1);
 
-            // Assert
             result.Should().BeOfType<NotFoundResult>();
         }
     }

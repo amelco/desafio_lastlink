@@ -1,7 +1,7 @@
 using Core.Entities;
 using FluentAssertions;
-using Xunit;
 using Infra.EventHandler;
+using Xunit;
 
 namespace Infra.Tests.EventHandler
 {

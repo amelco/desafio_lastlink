@@ -1,9 +1,6 @@
-﻿using Core.DTOs;
-using Core.Entities;
+﻿using Core.Entities;
 using Core.Interfaces;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
 
 namespace Infra.Repositories
 {
@@ -33,7 +30,6 @@ namespace Infra.Repositories
             }
         }
 
-        // TODO: make it async
         public IEnumerable<Product> GetAll()
         {
             return _context.Products.Where(prod => prod.IsDeleted == false);
