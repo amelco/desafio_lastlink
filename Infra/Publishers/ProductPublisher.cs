@@ -1,4 +1,5 @@
 ﻿using Core.Interfaces;
+using Microsoft.IdentityModel.Tokens;
 using RabbitMQ.Client;
 using System.Text;
 
@@ -16,8 +17,9 @@ namespace Infra.Publishers
             await channel.QueueDeclareAsync(queue: "logs_queue", durable: false, exclusive: false, autoDelete: false, arguments: null);
             await channel.QueueBindAsync(queue: "logs_queue", exchange: "logs", routingKey: string.Empty);
 
-            var body = Encoding.UTF8.GetBytes(message);
+            if (message.IsNullOrEmpty()) return;
 
+            var body = Encoding.UTF8.GetBytes(message);
             await channel.BasicPublishAsync(exchange: "logs", routingKey: string.Empty, body: body);
         }
     }

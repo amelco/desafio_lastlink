@@ -34,6 +34,7 @@ app.UseHttpsRedirection();
 
 app.MapControllers();
 
+// TODO: maybe put in a separate file
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -60,6 +61,13 @@ using (var scope = app.Services.CreateScope())
             CreatedAt DATETIME      NOT NULL,
         FOREIGN KEY (ProductId) REFERENCES Products(Id)
         );");
+}
+
+// TODO: maybe put in a separate file
+using (var scope = app.Services.CreateScope())
+{
+    var rabbit = scope.ServiceProvider.GetRequiredService<IProductPublisher>();
+    await rabbit.Publish("");
 }
 
 app.Run();
