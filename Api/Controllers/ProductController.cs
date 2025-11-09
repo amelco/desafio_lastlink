@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace Api.Controllers
 {
     [ApiController]
-    [Route("produto")]
+    [Route("products")]
     public class ProdutoController : Controller
     {
         private readonly IProductRepository _repository;
@@ -32,13 +32,6 @@ namespace Api.Controllers
                 return NotFound();
             }
 
-            // TODO: REMOVE from here and put it on Create !!!!!!!!!!!!!!!!!!!!!
-            var serializedEvent = _eventHandler.Create(product); // this function will return the serialized (JSON) ProductEvent 
-            if (!serializedEvent.IsNullOrEmpty())
-            {
-                await _publisher.Publish(serializedEvent);
-            }
-
             var productDto = product.Adapt<ProductDto>();
             return Ok(productDto);
         }
@@ -57,10 +50,14 @@ namespace Api.Controllers
             var product = productDto.Adapt<Product>();
             var createdProduct = await _repository.Add(product);
 
-            // TODO: put send event logic here
+            var createEvent = _eventHandler.Create(product);
+            if (!createEvent.IsNullOrEmpty())
+            {
+                await _publisher.Publish(createEvent);
+            }
 
             var createdProductDto = createdProduct.Adapt<ProductDto>();
-            return Ok(createdProduct);
+            return Ok(createdProductDto);
         }
 
         [HttpDelete]

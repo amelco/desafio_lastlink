@@ -1,6 +1,35 @@
-@desafio_HostAddress = http://localhost:5164
+@baseAddress = https://localhost:7206
 
-GET {{desafio_HostAddress}}/weatherforecast/
+GET {{baseAddress}}/products
 Accept: application/json
 
 ###
+POST {{baseAddress}}/products
+Content-Type: application/json
+
+{
+  "name": "novissimo",
+  "category": "plus",
+  "unitCost": 56.23
+}
+
+###
+GET {{baseAddress}}/products/3
+Accept: application/json
+
+### 
+PUT {{baseAddress}}/products/3
+Content-Type: application/json
+
+{
+  "name": "novissimo-updated",
+  "category": "premium",
+  "unitCost": 99.99
+}
+
+###
+DELETE {{baseAddress}}/products/3
+
+###
+GET {{baseAddress}}/products
+Accept: application/json

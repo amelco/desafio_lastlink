@@ -19,7 +19,6 @@ namespace Infra.Repositories
         public async Task<Product> Add(Product product)
         {
             _context.Products.Add(product);
-            // TODO: fix problem with isDeleted being NULL for some reason
             await _context.SaveChangesAsync();
             return product;
         }
@@ -55,7 +54,6 @@ namespace Infra.Repositories
             {
                 product.Id = id;
                 _context.Products.Update(product);
-                // TODO: fix problem with CreateAt after update
                 await _context.SaveChangesAsync();
                 return product;
             }

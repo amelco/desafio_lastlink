@@ -25,8 +25,7 @@ namespace Infra
                     .IsRequired()
                     .HasMaxLength(256);
                 entity.Property(prod => prod.UnitCost)
-                    .IsRequired()
-                    .HasColumnType("decimal(12,2)");
+                    .IsRequired();
                 entity.Property(prod => prod.CreatedAt)
                     .IsRequired();
                 entity.Property(prod => prod.IsDeleted)
