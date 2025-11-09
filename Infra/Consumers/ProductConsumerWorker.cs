@@ -1,11 +1,13 @@
 ﻿using Core.Entities;
 using Core.Interfaces;
+using Infra.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using System.Threading.Channels;
 
 namespace Infra.Consumers
 {
@@ -20,15 +22,11 @@ namespace Infra.Consumers
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var factory = new ConnectionFactory { HostName = "192.168.0.8" };
-            using var connection = await factory.CreateConnectionAsync();
-            using var channel = await connection.CreateChannelAsync();
+            var rabbit = new RabbitMqService();
+            
+            await rabbit.Connect("logs_queue");
 
-            await channel.ExchangeDeclareAsync(exchange: "logs", type: ExchangeType.Fanout);
-
-            await channel.QueueBindAsync(queue: "logs_queue", exchange: "logs", routingKey: string.Empty);
-
-            var consumer = new AsyncEventingBasicConsumer(channel);
+            var consumer = new AsyncEventingBasicConsumer(rabbit.channel!);
             consumer.ReceivedAsync += async (model, ea) =>
             {
                 byte[] body = ea.Body.ToArray();
@@ -45,7 +43,7 @@ namespace Infra.Consumers
                 return;
             };
 
-            await channel.BasicConsumeAsync("logs_queue", autoAck: true, consumer: consumer);
+            await rabbit.Consume(consumer);
 
             while (!stoppingToken.IsCancellationRequested)
             {
