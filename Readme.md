@@ -52,13 +52,13 @@ do projeto e executá-la em um container.
 ## Executando
 Após a compilação, a web api estará disponível em `http://localhost`.
 
+Apenas para esse desafio, o swagger está disponível em `http://localhost/swagger/index.html` (não é boa prática expor o swagger em ambientes de procução).
+
 ## Testes unitários
 Execute:
 ```bash
 dotnet test
 ```
-
-Apenas para esse desafio, o swagger está disponível em `http://localhost/swagger/index.html` (não é boa prática expor o swagger em ambientes de procução).
 
 ## Observações
 
