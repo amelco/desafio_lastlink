@@ -41,7 +41,7 @@ As principais bibliotecas utilizadas foram:
 
 
 ## Compilando
-Após descompactar o arquivo zip, dentro do diretorio `desafio/`, execute:
+Após clonar o repositório, dentro do diretorio `desafio_lastlink/`, execute:
 ```bash
 docker compose up -d
 ```
