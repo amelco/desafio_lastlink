@@ -16,11 +16,14 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:5164"
+      - "80:8080"
     depends_on:
       - db
       - rabbit
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=db;Database=ProductManagement;User=sa;Password=YourStrong!Password;TrustServerCertificate=True
       - RabbitMQ__HostName=rabbit
+      - RabbitMQ__Port=5672
+      - RabbitMQ__Username=guest
+      - RabbitMQ__Password=guest
+    restart: unless-stopped
