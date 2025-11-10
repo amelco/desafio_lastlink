@@ -13,7 +13,7 @@ namespace Infra.Services
         public ConnectionFactory? factory { get; set; }
         public IConnection? connection;
         public IChannel? channel;
-        public string queue = "";
+        public string queue = String.Empty;
 
         public RabbitMqService()
         {
