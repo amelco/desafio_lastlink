@@ -1,10 +1,5 @@
 ﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infra.Services
 {
@@ -17,8 +12,17 @@ namespace Infra.Services
 
         public RabbitMqService()
         {
-            var hostname = System.Environment.GetEnvironmentVariable("RabbitMQ__HostName") ?? "localhost";
-            factory = new ConnectionFactory { HostName = hostname };
+            var hostname = Environment.GetEnvironmentVariable("RabbitMQ__HostName") ?? "localhost";
+            var port = Environment.GetEnvironmentVariable("RabbitMQ__Port") ?? "5672";
+            var username = Environment.GetEnvironmentVariable("RabbitMQ__Username") ?? "guest";
+            var password = Environment.GetEnvironmentVariable("RabbitMQ__Password") ?? "guest";
+            factory = new ConnectionFactory
+            {
+                HostName = hostname,
+                Port = Convert.ToInt32(port),
+                UserName = username,
+                Password = password
+            };
         }
 
         public async Task Connect(string queue)
